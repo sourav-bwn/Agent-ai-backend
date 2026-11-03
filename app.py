@@ -32,7 +32,7 @@ def web_search(query):
     url = f"https://api.duckduckgo.com/?q={query}&format=json"
 
     try:
-        res = requests.get(url).json()
+        res = requests.get(url, timeout=10).json()
         results = []
 
         if res.get("AbstractText"):
@@ -136,7 +136,7 @@ def chat():
 
     # 🤖 AI CALL
     try:
-        response = requests.post(url, headers=headers, json={
+        response = requests.post(url, headers=headers, timeout=30, json={
             "model": "nousresearch/hermes-3-llama-3.1-405b",
             "messages": session.messages
         })
@@ -173,7 +173,7 @@ IMPORTANT:
         })
 
         try:
-            response = requests.post(url, headers=headers, json={
+            response = requests.post(url, headers=headers, timeout=30, json={
                 "model": "nousresearch/hermes-3-llama-3.1-405b",
                 "messages": session.messages
             })
