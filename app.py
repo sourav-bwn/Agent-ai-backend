@@ -97,7 +97,9 @@ def index():
 # 🤖 CHAT API
 @app.route('/api/chat', methods=['POST'])
 def chat():
-    data = request.json
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
+        return jsonify({"error": "Request body must be a JSON object"}), 400
     user_input = data.get('message', '')
     session_id = data.get('session_id', 'default')
 
