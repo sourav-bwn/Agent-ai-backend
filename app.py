@@ -32,7 +32,7 @@ def web_search(query):
     url = f"https://api.duckduckgo.com/?q={query}&format=json"
 
     try:
-        res = requests.get(url).json()
+        res = requests.get(url, timeout=10).json()
         results = []
 
         if res.get("AbstractText"):
@@ -97,7 +97,9 @@ def index():
 # 🤖 CHAT API
 @app.route('/api/chat', methods=['POST'])
 def chat():
-    data = request.json
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
+        return jsonify({"error": "Request body must be a JSON object"}), 400
     user_input = data.get('message', '')
     session_id = data.get('session_id', 'default')
 
@@ -134,7 +136,7 @@ def chat():
 
     # 🤖 AI CALL
     try:
-        response = requests.post(url, headers=headers, json={
+        response = requests.post(url, headers=headers, timeout=30, json={
             "model": "nousresearch/hermes-3-llama-3.1-405b",
             "messages": session.messages
         })
@@ -171,7 +173,7 @@ IMPORTANT:
         })
 
         try:
-            response = requests.post(url, headers=headers, json={
+            response = requests.post(url, headers=headers, timeout=30, json={
                 "model": "nousresearch/hermes-3-llama-3.1-405b",
                 "messages": session.messages
             })
